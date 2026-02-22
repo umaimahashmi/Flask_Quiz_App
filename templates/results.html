@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block title %}Results{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Results</h1>
+<p class="lead">Total Correct: <strong>{{ total_correct }}</strong> / {{ total_questions }}</p>
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Subject</th>
+      <th>Score</th>
+      <th>Percentage</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for subject, score in scores.items() %}
+    <tr>
+      <td>{{ subject }}</td>
+      <td>{{ score.correct }} / {{ score.total }}</td>
+      <td>{{ '%.1f'|format(percentages[subject]) }}%</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<h2 class="mt-5">Answer Key</h2>
+<ul class="list-group">
+  {% for mcq, user_answer in answers %}
+  <li class="list-group-item">
+    <strong>Q{{ mcq.number }}:</strong> {{ mcq.question }}<br>
+    <strong>Your answer:</strong> {{ user_answer }} - {{ mcq.options[user_answer] if user_answer in mcq.options else 'Skipped' }}<br>
+    <strong>Correct:</strong> {{ mcq.correct_option }} - {{ mcq.options[mcq.correct_option] }}
+  </li>
+  {% endfor %}
+</ul>
+
+<a class="btn btn-primary mt-4" href="{{ url_for('home') }}">Restart Quiz</a>
+{% endblock %}

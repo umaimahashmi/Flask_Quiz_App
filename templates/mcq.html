@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block title %}Question {{ mcq.number }}{% endblock %}
+
+{% block content %}
+<div class="card">
+  <div class="card-header">
+    <div class="d-flex justify-content-between">
+      <span>Question {{ mcq.number }} - {{ mcq.subject }}</span>
+      <span id="timer" data-elapsed-time="{{ elapsed_time }}"></span>
+    </div>
+    <div class="progress mt-2">
+      <div class="progress-bar" role="progressbar" style="width: {{ progress }}%;" aria-valuenow="{{ progress }}" aria-valuemin="0" aria-valuemax="100">{{ progress }}%</div>
+    </div>
+  </div>
+  <div class="card-body">
+    <p class="card-text">{{ mcq.question }}</p>
+    {% if error %}
+      <div class="text-danger">{{ error }}</div>
+    {% endif %}
+    <form id="mcq-form" action="{{ url_for('submit_answer') }}" method="post">
+      {% for option_letter, option_text in mcq.options.items() %}
+        <div class="form-check">
+          <input class="form-check-input" type="radio" name="answer" id="opt{{ option_letter }}" value="{{ option_letter }}">
+          <label class="form-check-label" for="opt{{ option_letter }}">{{ option_letter }}. {{ option_text }}</label>
+        </div>
+      {% endfor %}
+      <button class="btn btn-success mt-3" type="submit">Next</button>
+    </form>
+    <form action="{{ url_for('skip_mcq') }}" method="post" class="mt-2">
+      <button class="btn btn-secondary">Skip</button>
+    </form>
+  </div>
+</div>
+
+<script>
+window.onload = function () {
+    var elapsed_time = document.getElementById("timer").getAttribute("data-elapsed-time");
+    var total_seconds = 600 - elapsed_time; // ten minutes
+    var c_minutes = parseInt(total_seconds / 60);
+    var c_seconds = parseInt(total_seconds % 60);
+    function CheckTime() {
+      document.getElementById("timer").innerHTML =
+        "Time Left: " + c_minutes + " min " + c_seconds + " sec";
+      if (total_seconds <= 0) {
+        window.location.href = "{{ url_for('results') }}";
+      } else {
+        total_seconds -= 1;
+        c_minutes = parseInt(total_seconds / 60);
+        c_seconds = parseInt(total_seconds % 60);
+        setTimeout(CheckTime, 1000);
+      }
+    }
+    CheckTime();
+};
+</script>
+{% endblock %}

@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block title %}Welcome - QuizApp{% endblock %}
+
+{% block content %}
+<div class="text-center mt-5">
+  <h1>Welcome to the Interactive MCQ Quiz</h1>
+  <p class="lead">You will have 10 minutes to answer {{ mcqs|length if mcqs is defined else '200' }} questions covering Biology, Chemistry, Physics, English and Logical Reasoning. Feel free to skip and return to any question.</p>
+  <form action="{{ url_for('begin') }}" method="post">
+    <button class="btn btn-primary btn-lg">Start Quiz</button>
+  </form>
+</div>
+{% endblock %}
